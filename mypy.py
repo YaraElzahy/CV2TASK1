@@ -4,20 +4,20 @@ import enum
 
 
 def changeState(ch, state):
-    if (state == PIC.GREY_NOTFLIPPED and ch == 'g') or (state == PIC.COLORED_NOTFLIPPED and ch == 'g') \
-            or (state == PIC.GREY_FLIPPED and ch == 'f'):
+    if (state == PIC.GREY_NOTFLIPPED and ch == ord('g')) or (state == PIC.COLORED_NOTFLIPPED and ch == ord('g')) \
+            or (state == PIC.GREY_FLIPPED and ch == ord('f')):
         return PIC.GREY_NOTFLIPPED
 
-    if (state == PIC.GREY_FLIPPED and ch == 'g') or (state == PIC.COLORED_FLIPPED and ch == 'g') \
-            or (state == PIC.GREY_NOTFLIPPED and ch == 'f'):
+    if (state == PIC.GREY_FLIPPED and ch == ord('g')) or (state == PIC.COLORED_FLIPPED and ch == ord('g')) \
+            or (state == PIC.GREY_NOTFLIPPED and ch == ord('f')):
         return PIC.GREY_FLIPPED
 
-    if (state == PIC.COLORED_NOTFLIPPED and ch == 'f') or (state == PIC.GREY_FLIPPED and ch == 'c') \
-            or (state == PIC.COLORED_FLIPPED and ch == 'c'):
+    if (state == PIC.COLORED_NOTFLIPPED and ch == ord('f')) or (state == PIC.GREY_FLIPPED and ch == ord('c')) \
+            or (state == PIC.COLORED_FLIPPED and ch == ord('c')):
         return PIC.COLORED_FLIPPED
 
-    if (state == PIC.COLORED_FLIPPED and ch == 'f') or (state == PIC.GREY_NOTFLIPPED and ch == 'c') \
-            or (state == PIC.COLORED_NOTFLIPPED and ch == 'c'):
+    if (state == PIC.COLORED_FLIPPED and ch == ord('f')) or (state == PIC.GREY_NOTFLIPPED and ch == ord('c')) \
+            or (state == PIC.COLORED_NOTFLIPPED and ch == ord('c')):
         return PIC.COLORED_NOTFLIPPED
     return state
 
@@ -50,7 +50,10 @@ if __name__ == '__main__':
             break
         else:
             key = cv2.waitKey(1) & 0xFF
-            picState = changeState(key, picState)
+            # if key is not equal to default value(255), change key state
+            if key != 255:
+                picState = changeState(key, picState)
+                print(picState)
 
             if picState == PIC.GREY_NOTFLIPPED:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # convert colored frame to grayscale
@@ -59,13 +62,10 @@ if __name__ == '__main__':
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # convert colored frame to grayscale
                 frame = cv2.flip(frame, 0)
 
-            elif picState == PIC.COLORED_NOTFLIPPED:
-                continue
-
             elif picState == PIC.COLORED_FLIPPED:
                 frame = cv2.flip(frame, 0)
 
-            elif key == ord('p'):
+            if key == ord('p'):
                 while True:
                     key2 = cv2.waitKey(0) & 0XFF
                     cv2.imshow('frame', frame)
@@ -73,6 +73,7 @@ if __name__ == '__main__':
                     if key2 == ord('o'):
                         break
 
+            # save current video frame, then increment i to avoid it from being overridden
             elif key == ord('s'):
                 cv2.imwrite('outputImages/img' + str(i) + '.jpg', frame)
                 i += 1
@@ -81,6 +82,7 @@ if __name__ == '__main__':
                 # define the codec and create VideoWriter object
                 fourcc = cv2.VideoWriter_fourcc(*'XVID')
                 out = cv2.VideoWriter("Record.avi", fourcc, 20.0, (640, 480))
+
                 # output the video frame
                 out.write(frame)
 
