@@ -96,7 +96,7 @@ if __name__ == '__main__':
             elif key == ord('q'):
                 break
 
-            cv2.imshow('frame', frame)  # display the resulting (grayscale) frame
+            cv2.imshow('frame', frame)  # display the resulting frame
 
     cap.release()  # after breaking out of the loop(pressing 'q'), release the capture
     cv2.destroyAllWindows()  # destroy all windows
