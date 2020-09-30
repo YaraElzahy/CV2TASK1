@@ -38,9 +38,6 @@ if __name__ == '__main__':
     # create a VideoCapture object and pass in the device index (0 or -1 since it's only one camera) or video file name
     cap = cv2.VideoCapture(0)
 
-    # define the codec and create VideoWriter object
-    # fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    # out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))  # output video
     i = 0
     picState = PIC.COLORED_NOTFLIPPED
     while cap.isOpened():
@@ -55,16 +52,20 @@ if __name__ == '__main__':
                 picState = changeState(key, picState)
                 print(picState)
 
+            # if 'g' was pressed, change color to grey
             if picState == PIC.GREY_NOTFLIPPED:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # convert colored frame to grayscale
 
+            # if 'g' was pressed followed be 'f', change color to grey then flip
             elif picState == PIC.GREY_FLIPPED:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # convert colored frame to grayscale
                 frame = cv2.flip(frame, 0)
 
+            # if 'f' was pressed, flip frame
             elif picState == PIC.COLORED_FLIPPED:
                 frame = cv2.flip(frame, 0)
 
+            # pause the video when p is pressed by waiting indefinitely for o (play or resume) to be pressed
             if key == ord('p'):
                 while True:
                     key2 = cv2.waitKey(0) & 0XFF
@@ -78,6 +79,7 @@ if __name__ == '__main__':
                 cv2.imwrite('outputImages/img' + str(i) + '.jpg', frame)
                 i += 1
 
+            # start recording video
             elif key == ord('m'):
                 # define the codec and create VideoWriter object
                 fourcc = cv2.VideoWriter_fourcc(*'XVID')
@@ -86,9 +88,11 @@ if __name__ == '__main__':
                 # output the video frame
                 out.write(frame)
 
+            # stop recording video
             elif key == ord('n'):
                 out.release()
 
+            # quit
             elif key == ord('q'):
                 break
 
